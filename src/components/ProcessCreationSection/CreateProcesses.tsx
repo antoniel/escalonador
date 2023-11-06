@@ -7,6 +7,7 @@ import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { useAtom } from "jotai"
 import { processesAtom } from "../App"
+import clsx from "clsx"
 
 interface CreateProcessesProps {
   processes: {
@@ -52,10 +53,20 @@ const CreateProcesses: React.FC<CreateProcessesProps> = ({ processes, setProcess
 
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 ">
-      <button onClick={() => createProcess(INITIAL_PROCESS)} className="create__process__button">
-        Criar processo
-      </button>
       {children}
+      <button
+        onClick={() => createProcess(INITIAL_PROCESS)}
+        className={clsx(
+          "min-h-[228px] h-full center border-2 border-dashed text-2xl font-bold text-center text-gray-900-900 uppercase border-gray-400",
+          "hover:border-black"
+        )}
+      >
+        <div className=" bg-white inline-block rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+          </svg>
+        </div>
+      </button>
     </section>
   )
 }

@@ -86,29 +86,32 @@ export default function App() {
             <Process key={process.id} process={process} />
           ))}
         </CreateProcesses>
+        <div className="flex justify-center space-x-4">
+          <button className="p-10 rounded-lg bg-green-500" onClick={handleRun}>
+            Run
+          </button>
+          <button className="p-10 rounded-lg bg-red-500" id="button__reset" onClick={handleReset}>
+            Reset
+          </button>
+        </div>
+        <FrontGanttChart
+          processList={processList}
+          conditions={conditions}
+          schedule={schedule}
+          play={play}
+          reset={reset}
+        />
       </section>
-      <div className="flex justify-center space-x-4">
-        <button className="p-10 rounded-lg bg-green-500" onClick={handleRun}>
-          Run
-        </button>
-        <button className="p-10 rounded-lg bg-red-500" id="button__reset" onClick={handleReset}>
-          Reset
-        </button>
-      </div>
-      <FrontGanttChart
-        processList={processList}
-        conditions={conditions}
-        schedule={schedule}
-        play={play}
-        reset={reset}
-      />
-      <MemoriesComponent
-        processList={processList}
-        conditions={conditions}
-        schedule={schedule}
-        play={play}
-        reset={reset}
-      />
+      <section>
+        <h1>Visualização de Memória e Disco</h1>
+        <MemoriesComponent
+          processList={processList}
+          conditions={conditions}
+          schedule={schedule}
+          play={play}
+          reset={reset}
+        />
+      </section>
     </div>
   )
 }
@@ -203,16 +206,14 @@ const Quantum = () => {
     setConditions({ ...conditions, [id]: value ? parseInt(value) : "" })
   }
   return (
-    <div className="space-y-2">
-      <Card>
-        <CardHeader>
-          <h2>Quantum </h2>
-        </CardHeader>
-        <CardContent>
-          <Input onChange={handleChange} type="number" id="quantum" name="quantum" min="1" value={conditions.quantum} />
-        </CardContent>
-      </Card>
-    </div>
+    <Card>
+      <CardHeader>
+        <h2>Quantum </h2>
+      </CardHeader>
+      <CardContent>
+        <Input onChange={handleChange} type="number" id="quantum" name="quantum" min="1" value={conditions.quantum} />
+      </CardContent>
+    </Card>
   )
 }
 
