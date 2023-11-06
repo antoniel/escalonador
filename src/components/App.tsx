@@ -6,7 +6,7 @@ import { IProcess } from "../interfaces/Process"
 import { IConditions } from "../interfaces/Conditions"
 import { SchedulerFactory, SchedulerType } from "../schedulers"
 import Scheduler from "../interfaces/Scheduler"
-import CreateProcesses from "./ProcessCreationSection/CreateProcesses"
+import CreateProcesses, { Process } from "./ProcessCreationSection/CreateProcesses"
 import clsx from "clsx"
 import { atom, useAtom } from "jotai"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
@@ -22,9 +22,10 @@ const INITIAL_CONDITIONS: IConditions = {
   intervalo: 125,
 }
 const coditionsAtom = atom<IConditions>(INITIAL_CONDITIONS)
+export const processesAtom = atom<{ [key: string]: IProcess }>({})
 
 export default function App() {
-  const [processes, setProcesses] = useState<{ [key: string]: IProcess }>({})
+  const [processes, setProcesses] = useAtom(processesAtom)
   const [conditions] = useAtom(coditionsAtom)
   const [schedule, setSchedule] = useState<number[]>([])
   const [save, setSave] = useState<boolean>(false)
@@ -80,7 +81,11 @@ export default function App() {
       </section>
       <section className="mt-8">
         <h1>Gerenciamento de Processos</h1>
-        <CreateProcesses processes={processes} setProcesses={setProcesses} />
+        <CreateProcesses processes={processes} setProcesses={setProcesses}>
+          {Object.values(processes).map((process) => (
+            <Process key={process.id} process={process} />
+          ))}
+        </CreateProcesses>
       </section>
       <div className="flex justify-center space-x-4">
         <button className="p-10 rounded-lg bg-green-500" onClick={handleRun}>
