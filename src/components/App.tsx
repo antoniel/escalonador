@@ -10,6 +10,9 @@ import CreateProcesses from "./ProcessCreationSection/CreateProcesses"
 import clsx from "clsx"
 import { atom, useAtom } from "jotai"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
+import { Card, CardContent, CardHeader } from "./ui/card"
+import { Input } from "./ui/input"
+import { Label } from "./ui/label"
 
 const INITIAL_CONDITIONS: IConditions = {
   method: "FIFO",
@@ -64,13 +67,14 @@ export default function App() {
     ;(document.getElementById("chart__warning") as HTMLElement).style.display = "none"
   }, [])
 
-  console.log("processes", conditions.method)
   return (
-    <div className="px-12 py-12">
-      <div>
+    <div className="px-12 py-12 max-w-screen-xl mx-auto ">
+      <div className="flex gap-4">
         <Methods />
         <Pagincação />
+        <Intervalo />
         <QuantumESobrecarga />
+        <Sobrecarga />
       </div>
       <CreateProcesses processes={processes} setProcesses={setProcesses} />
       <div className="flex justify-center space-x-4">
@@ -102,22 +106,83 @@ export default function App() {
 const Methods = () => {
   const [conditions, setConditions] = useAtom(coditionsAtom)
   return (
-    <div className="flex flex-col">
-      <h2 className="methods__heading">Selecione o método:</h2>
-      <Select onValueChange={(method: any) => setConditions({ ...conditions, method })}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Theme" />
-        </SelectTrigger>
-        <SelectContent>
-          {(["EDF", "FIFO", "RR", "SJF"] as const).map((method) => (
-            <SelectItem key={method} value={method}>
-              {method}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <div className="flex space-x-2"></div>
-    </div>
+    <Card>
+      <CardHeader>
+        <h2>Selecione o método</h2>
+      </CardHeader>
+      <CardContent>
+        <Select onValueChange={(method: any) => setConditions({ ...conditions, method })}>
+          <SelectTrigger>
+            <SelectValue placeholder="EDF" defaultValue={"EDF"} />
+          </SelectTrigger>
+          <SelectContent>
+            {(["EDF", "FIFO", "RR", "SJF"] as const).map((method) => (
+              <SelectItem key={method} value={method}>
+                {method}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </CardContent>
+    </Card>
+  )
+}
+
+const Pagincação = () => {
+  const [conditions, setConditions] = useAtom(coditionsAtom)
+  return (
+    <Card>
+      <CardHeader>
+        <h2>Paginação </h2>
+      </CardHeader>
+      <CardContent>
+        <Select onValueChange={(pagination: "lru" | "fifo") => setConditions({ ...conditions, pagination })}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="fifo" defaultValue={"fifo"} />
+          </SelectTrigger>
+          <SelectContent>
+            {(["fifo", "lru"] as const).map((pagination) => (
+              <SelectItem key={pagination} value={pagination}>
+                {pagination}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </CardContent>
+    </Card>
+  )
+}
+
+const Intervalo = () => {
+  const [conditions, setConditions] = useAtom(coditionsAtom)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target
+    const intervaloEmSegundos = Math.abs((parseInt(value) || 1) * 1000)
+    setConditions({ ...conditions, [id]: value ? intervaloEmSegundos : "" })
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div>
+          <h2 className="inline">Intervalo </h2>
+          <p className="inline">(segundos)</p>
+        </div>
+      </CardHeader>
+      <CardContent className="flex justify-center items-center gap-2">
+        <Input
+          id="intervalo"
+          type="number"
+          pattern="[0-9]*"
+          inputMode="numeric"
+          defaultValue={1}
+          max={10}
+          min={1}
+          onChange={handleChange}
+        />
+      </CardContent>
+    </Card>
   )
 }
 
@@ -129,53 +194,34 @@ const QuantumESobrecarga = () => {
   }
   return (
     <div className="space-y-2">
-      <label htmlFor="quantum" className="methods__bottom_field">
-        <p>Quantum: </p>
-        <input onChange={handleChange} type="number" id="quantum" name="quantum" min="1" value={conditions.quantum} />
-      </label>
-      <label htmlFor="overload" className="methods__bottom_field">
-        <p>Sobrecarga: </p>
-        <input onChange={handleChange} type="number" id="sobrecarga" min="0" value={conditions.sobrecarga} />
-      </label>
+      <Card>
+        <CardHeader>
+          <h2>Quantum </h2>
+        </CardHeader>
+        <CardContent>
+          <Input onChange={handleChange} type="number" id="quantum" name="quantum" min="1" value={conditions.quantum} />
+        </CardContent>
+      </Card>
     </div>
   )
 }
 
-const Pagincação = () => {
+const Sobrecarga = () => {
   const [conditions, setConditions] = useAtom(coditionsAtom)
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
     setConditions({ ...conditions, [id]: value ? parseInt(value) : "" })
   }
+
   return (
-    <div className="flex flex-col space-y-2">
-      <h2 className="methods__pagination__title">Paginação: </h2>
-      <div className="flex flex-row">
-        <Select onValueChange={(pagination: "lru" | "fifo") => setConditions({ ...conditions, pagination })}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Paginação" />
-          </SelectTrigger>
-          <SelectContent>
-            {(["fifo", "lru"] as const).map((pagination) => (
-              <SelectItem key={pagination} value={pagination}>
-                {pagination}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <input
-          id="intervalo"
-          type="range"
-          min="125"
-          max="2000"
-          step="125"
-          value={conditions.intervalo}
-          onChange={handleChange}
-        />
-        {conditions.intervalo / 1000} segundos
-      </div>
-    </div>
+    <Card>
+      <CardHeader>
+        <h2>Sobrecarga</h2>
+      </CardHeader>
+      <CardContent>
+        <Input id="sobrecarga" type="number" min="0" value={conditions.sobrecarga} onChange={handleChange} />
+      </CardContent>
+    </Card>
   )
 }
