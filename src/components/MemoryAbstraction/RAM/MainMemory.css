@@ -22,11 +22,6 @@
   align-items: center;
 }
 
-h1{
-  color: white;
-  margin-bottom: 20px;
-}
-
 .matrix-cell {
   position: relative;
 }
@@ -44,4 +39,3 @@ h1{
 .matrix-cell .cell-value {
   margin-top: 16px;
 }
-

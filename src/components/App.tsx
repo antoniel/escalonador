@@ -21,8 +21,8 @@ const INITIAL_CONDITIONS: IConditions = {
   sobrecarga: 1,
   intervalo: 125,
 }
-
 const coditionsAtom = atom<IConditions>(INITIAL_CONDITIONS)
+
 export default function App() {
   const [processes, setProcesses] = useState<{ [key: string]: IProcess }>({})
   const [conditions] = useAtom(coditionsAtom)
@@ -50,7 +50,6 @@ export default function App() {
   function handleRun() {
     setReset(!reset)
     setSave(!save)
-    ;(document.getElementById("button__run") as HTMLInputElement).disabled = true
   }
   function handleReset() {
     setReset(!reset)
@@ -69,14 +68,20 @@ export default function App() {
 
   return (
     <div className="px-12 py-12 max-w-screen-xl mx-auto ">
-      <div className="flex gap-4">
-        <Methods />
-        <Pagincação />
-        <Intervalo />
-        <QuantumESobrecarga />
-        <Sobrecarga />
-      </div>
-      <CreateProcesses processes={processes} setProcesses={setProcesses} />
+      <section>
+        <h1>Configurações de Escalonamento</h1>
+        <div className="flex gap-4">
+          <Methods />
+          <Pagincação />
+          <Intervalo />
+          <Quantum />
+          <Sobrecarga />
+        </div>
+      </section>
+      <section className="mt-8">
+        <h1>Gerenciamento de Processos</h1>
+        <CreateProcesses processes={processes} setProcesses={setProcesses} />
+      </section>
       <div className="flex justify-center space-x-4">
         <button className="p-10 rounded-lg bg-green-500" onClick={handleRun}>
           Run
@@ -158,7 +163,7 @@ const Intervalo = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
-    const intervaloEmSegundos = Math.abs((parseInt(value) || 1) * 1000)
+    const intervaloEmSegundos = Math.abs((parseFloat(value) || 1) * 1000)
     setConditions({ ...conditions, [id]: value ? intervaloEmSegundos : "" })
   }
 
@@ -176,7 +181,7 @@ const Intervalo = () => {
           type="number"
           pattern="[0-9]*"
           inputMode="numeric"
-          defaultValue={1}
+          defaultValue={0.125}
           max={10}
           min={1}
           onChange={handleChange}
@@ -186,7 +191,7 @@ const Intervalo = () => {
   )
 }
 
-const QuantumESobrecarga = () => {
+const Quantum = () => {
   const [conditions, setConditions] = useAtom(coditionsAtom)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target

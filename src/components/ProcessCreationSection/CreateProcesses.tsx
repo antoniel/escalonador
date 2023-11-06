@@ -34,36 +34,25 @@ const INITIAL_PROCESS: IProcess = {
 
 const CreateProcesses: React.FC<CreateProcessesProps> = ({ processes, setProcesses }) => {
   const createProcess = (process: IProcess) => {
-    // const id = generateId(processes);
     const id = Object.values(processes).length + 1
-    // console.log(Object.values(processes));
-    const newProcesses = { ...processes }
-    newProcesses[id] = { ...process, id }
+    const newProcesses = { ...processes, [id]: { ...process, id } }
     setProcesses(newProcesses)
   }
 
   const updateProcess = (processId: string | undefined, key: keyof IProcess, value: number | undefined) => {
     if (!processId) return
-    const newProcesses: any = { ...processes }
-    newProcesses[processId] = {
-      ...newProcesses[processId],
-      [key]: value,
-    }
+    const updatedProcess = { ...processes[processId], [key]: value }
+    const newProcesses = { ...processes, [processId]: updatedProcess }
     setProcesses(newProcesses)
   }
 
   const deleteProcess = (processId: string | undefined) => {
     if (!processId) return
-    const tmpProcesses = { ...processes }
-    delete tmpProcesses[processId]
-    let i = 1
-    const newProcesses: { [key: number]: IProcess } = {}
-    Object.keys(tmpProcesses).forEach((key) => {
-      tmpProcesses[key].id = i
-      newProcesses[i] = tmpProcesses[key]
-      i++
-    })
-    // console.log(Object.keys(newProcesses));
+    const { [processId]: _, ...tmpProcesses } = processes
+    const newProcesses = Object.values(tmpProcesses).reduce((acc, process, index) => {
+      const id = index + 1
+      return { ...acc, [id]: { ...process, id } }
+    }, {})
     setProcesses(newProcesses)
   }
 
@@ -74,8 +63,7 @@ const CreateProcesses: React.FC<CreateProcessesProps> = ({ processes, setProcess
   })
 
   return (
-    <section className="create__process">
-      <div className="create__process__heading"></div>
+    <section className="">
       <ol className="process__list">
         <li>
           <button onClick={() => createProcess(INITIAL_PROCESS)} className="create__process__button">
