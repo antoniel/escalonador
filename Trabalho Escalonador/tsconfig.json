@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    // "target": "es6",
+    "module": "system",
+    "strict": true,
+
+    // "target": "es5",
+    // "module": "esnext",
+    // "moduleResolution": "node",
+    // "jsx": "react",
+    // "esModuleInterop": true,
+    // "strict": true,
+    "lib": ["DOM", "ES2016"],
+    // "forceConsistentCasingInFileNames": true
+
+    // "outDir": "./dist", // Diretório de saída para os arquivos JavaScript
+    // "rootDir": "./src", // Diretório de origem para os arquivos TypeScript
+  }
+}
