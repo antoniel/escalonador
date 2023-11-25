@@ -8,11 +8,12 @@ import PagingAlgorithm from "../../interfaces/PagingAlgorithm"
 import PaginationData from "../../interfaces/PaginationData"
 import FIFOPageReplacement from "../../paging/fifo"
 import LRUPageReplacement from "../../paging/lru"
+import { SchedulerType } from "@/interfaces/Scheduler"
 
 interface MemoriesComponentProps {
   processList: IProcess[]
   conditions: IConditions
-  schedule: number[]
+  schedule: SchedulerType
   play: boolean
   reset: boolean
 }

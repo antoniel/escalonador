@@ -1,5 +1,6 @@
-import PaginationData from "./PaginationData";
+import PaginationData from "./PaginationData"
+import { SchedulerType } from "./Scheduler"
 
 export default interface PagingAlgorithm {
-  run(schedule: number[]): PaginationData[];
+  run(schedule: SchedulerType): PaginationData[]
 }

@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react"
-import FrontGanttChart from "./ChartSection/FrontGanttChart"
-import MemoriesComponent from "./MemoryAbstraction/MemoriesComponent"
-import "./App.css"
-import { IProcess } from "../interfaces/Process"
-import { IConditions } from "../interfaces/Conditions"
-import { SchedulerFactory, SchedulerType } from "../schedulers"
-import Scheduler from "../interfaces/Scheduler"
-import CreateProcesses, { Process } from "./ProcessCreationSection/CreateProcesses"
-import clsx from "clsx"
+import MemoriesComponent from "./components/MemoryAbstraction/MemoriesComponent"
+import "./components/App.css"
+import { IProcess } from "./interfaces/Process"
+import { IConditions } from "./interfaces/Conditions"
+import { SchedulerMethods, getScheduler } from "./schedulers"
+import Scheduler, { SchedulerType } from "./interfaces/Scheduler"
+import CreateProcesses, { Process } from "./components/ProcessCreationSection/CreateProcesses"
 import { atom, useAtom } from "jotai"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
-import { Card, CardContent, CardHeader } from "./ui/card"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select"
+import { Card, CardContent, CardHeader } from "./components/ui/card"
+import { Input } from "./components/ui/input"
+import { GanttChart } from "./gantt"
+import { Button } from "./components/ui/button"
 
 const INITIAL_CONDITIONS: IConditions = {
   method: "FIFO",
@@ -27,21 +26,20 @@ export const processesAtom = atom<{ [key: string]: IProcess }>({})
 export default function App() {
   const [processes, setProcesses] = useAtom(processesAtom)
   const [conditions] = useAtom(coditionsAtom)
-  const [schedule, setSchedule] = useState<number[]>([])
+  const [schedule, setSchedule] = useState<SchedulerType>([])
   const [save, setSave] = useState<boolean>(false)
   const [reset, setReset] = useState<boolean>(true)
-  const [play, setPlay] = useState<boolean>(true)
+  const [play, setPlay] = useState<boolean>(false)
 
   const processList = Object.values(processes)
 
   useEffect(() => {
     if (processList.length > 0) {
-      const schedulerType: string = conditions.method
-      const createdScheduler: Scheduler = SchedulerFactory.createScheduler(schedulerType as SchedulerType)
-      const createdSchedule = createdScheduler.schedule(processList, conditions.quantum, conditions.sobrecarga)
+      const schedulerType = conditions.method as SchedulerMethods
+      const schedule = getScheduler(schedulerType).schedule(processList, conditions.quantum, conditions.sobrecarga)
 
-      setSchedule(createdSchedule)
-      console.log("CreatedSchedule", createdSchedule)
+      setSchedule(schedule)
+      console.log("CreatedSchedule", schedule)
       setTimeout(() => {
         setPlay(!play)
       }, 500)
@@ -52,20 +50,6 @@ export default function App() {
     setReset(!reset)
     setSave(!save)
   }
-  function handleReset() {
-    setReset(!reset)
-    ;(document.getElementById("button__reset") as HTMLInputElement).disabled = true
-    ;(document.getElementById("button__run") as HTMLInputElement).disabled = false
-    ;(document.getElementById("chart__turnaround") as HTMLElement).style.color = "white"
-    ;(document.getElementById("page__top") as HTMLElement).scrollIntoView()
-    ;(document.getElementById("chart__warning") as HTMLElement).style.display = "none"
-    ;(document.getElementsByClassName("memory-container")[0] as HTMLElement).style.visibility = "visible"
-  }
-
-  useEffect(() => {
-    ;(document.getElementById("button__reset") as HTMLInputElement).disabled = true
-    ;(document.getElementById("chart__warning") as HTMLElement).style.display = "none"
-  }, [])
 
   return (
     <div className="px-12 py-12 max-w-screen-xl mx-auto ">
@@ -79,24 +63,19 @@ export default function App() {
           <Sobrecarga />
         </div>
       </section>
-      <section className="mt-8">
-        <h1>Gerenciamento de Processos</h1>
+      <section className="mt-8 space-y-4">
+        <div>
+          <h1>Gerenciamento de Processos</h1>
+        </div>
         <CreateProcesses processes={processes} setProcesses={setProcesses}>
+          <Button onClick={handleRun}>{play ? "Reiniciar" : "Começar"}</Button>
           {Object.values(processes).map((process) => (
             <Process key={process.id} process={process} />
           ))}
         </CreateProcesses>
-        <div className="flex justify-center space-x-4">
-          <button className="p-10 rounded-lg bg-green-500" onClick={handleRun}>
-            Run
-          </button>
-          <button className="p-10 rounded-lg bg-red-500" id="button__reset" onClick={handleReset}>
-            Reset
-          </button>
-        </div>
-        <FrontGanttChart
+        <GanttChart
           processList={processList}
-          conditions={conditions}
+          intervalo={conditions.intervalo}
           schedule={schedule}
           play={play}
           reset={reset}

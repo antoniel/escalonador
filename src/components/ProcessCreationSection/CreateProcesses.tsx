@@ -1,12 +1,11 @@
 import React, { useEffect } from "react"
-import "./CreateProcesses.css"
 // import { generateId } from "../../helper/generateId";
 import { IProcess } from "../../interfaces/Process"
-import { Card, CardContent, CardHeader } from "../ui/card"
+import { Card, CardContent } from "../ui/card"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { useAtom } from "jotai"
-import { processesAtom } from "../App"
+import { processesAtom } from "../../App"
 import clsx from "clsx"
 
 interface CreateProcessesProps {
@@ -52,12 +51,11 @@ const CreateProcesses: React.FC<CreateProcessesProps> = ({ processes, setProcess
   })
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 ">
-      {children}
+    <section className="flex flex-col gap-4">
       <button
         onClick={() => createProcess(INITIAL_PROCESS)}
         className={clsx(
-          "min-h-[228px] h-full center border-2 border-dashed text-2xl font-bold text-center text-gray-900-900 uppercase border-gray-400",
+          "min-h-[96px] h-full center border-2 border-dashed text-2xl font-bold text-center text-gray-900-900 uppercase border-gray-400",
           "hover:border-black"
         )}
       >
@@ -67,6 +65,7 @@ const CreateProcesses: React.FC<CreateProcessesProps> = ({ processes, setProcess
           </svg>
         </div>
       </button>
+      {children}
     </section>
   )
 }
@@ -106,18 +105,19 @@ export const Process: React.FC<ProcessProps> = (props) => {
     <div className="process__card">
       <Card className="relative">
         {!!shouldShowDeleteOnlyIfMoreThanOneProcess && (
-          <button onClick={() => deleteProcess(process.id)} className="text-lg absolute top-2 right-4">
+          <button
+            onClick={() => deleteProcess(process.id)}
+            className="text-lg absolute top-1/2 right-2 translate-y-[-50%]"
+          >
             &#x00D7;
           </button>
         )}
-        <CardHeader>
-          <h2>
-            Cód.: <code>{process.id}</code>
-          </h2>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 grid-rows-2 gap-4">
-            <div>
+        <CardContent className="px-8 py-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-sm">
+              Id: <code>{process.id}</code>
+            </h2>
+            <div className="flex items-center gap-2">
               <Label htmlFor="executionTime">Tempo:</Label>
               <Input
                 onChange={handleChange}
@@ -128,7 +128,7 @@ export const Process: React.FC<ProcessProps> = (props) => {
                 min="1"
               />
             </div>
-            <div>
+            <div className="flex items-center gap-2">
               <Label htmlFor="deadline">Deadline:</Label>
               <Input
                 onChange={handleChange}
@@ -139,7 +139,7 @@ export const Process: React.FC<ProcessProps> = (props) => {
                 min="0"
               />
             </div>
-            <div>
+            <div className="flex items-center gap-2">
               <Label htmlFor="numPages">Páginas:</Label>
               <Input
                 onChange={handleChange}
@@ -150,7 +150,7 @@ export const Process: React.FC<ProcessProps> = (props) => {
                 min="1"
               />
             </div>
-            <div>
+            <div className="flex items-center gap-2">
               <Label htmlFor="arrivalTime">Chegada:</Label>
               <Input
                 onChange={handleChange}

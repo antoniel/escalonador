@@ -1,26 +1,22 @@
-import { useState } from "react";
-import { IProcess } from "../interfaces/Process";
-import Scheduler from "../interfaces/Scheduler";
-import { SchedulerType, SchedulerFactory } from "../schedulers";
+import { useState } from "react"
+import { IProcess } from "../interfaces/Process"
+import Scheduler from "../interfaces/Scheduler"
+import { SchedulerMethods, SchedulerFactory } from "../schedulers"
 
 interface GanttChartInput {
-  classNameParam: string;
-  processes: IProcess[];
-  schedulerType: SchedulerType;
+  classNameParam: string
+  processes: IProcess[]
+  schedulerType: SchedulerMethods
 }
 
-function GanttChart({
-  classNameParam,
-  processes,
-  schedulerType,
-}: GanttChartInput) {
-  const [schedule, setSchedule] = useState<number[]>([]);
-  console.log(schedule);
-  const scheduler: Scheduler = SchedulerFactory.createScheduler(schedulerType);
+function GanttChart({ classNameParam, processes, schedulerType }: GanttChartInput) {
+  const [schedule, setSchedule] = useState<number[]>([])
+  console.log(schedule)
+  const scheduler: Scheduler = SchedulerFactory.createScheduler(schedulerType)
 
   // Execute the selected scheduler
   function executeScheduler(): void {
-    setSchedule(scheduler.schedule(processes));
+    setSchedule(scheduler.schedule(processes))
   }
 
   return (
@@ -29,7 +25,7 @@ function GanttChart({
         {schedulerType}
       </button>
     </div>
-  );
+  )
 }
 
-export default GanttChart;
+export default GanttChart

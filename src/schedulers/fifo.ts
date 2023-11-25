@@ -1,33 +1,33 @@
-import { IProcess } from "../interfaces/Process";
-import Scheduler from "../interfaces/Scheduler";
-import ChartBoxEnum from "../components/ChartSection/ChartBoxEnum";
+import ChartBoxEnum from "@/components/ChartSection/ChartBoxEnum"
+import { IProcess } from "../interfaces/Process"
+import Scheduler from "../interfaces/Scheduler"
 
 class FIFOScheduler implements Scheduler {
-  public schedule(processes: IProcess[]): number[] {
-    const processesQueue: IProcess[] = [...processes]
+  public schedule(processes: IProcess[]) {
+    const processesQueue = [...processes]
       .map((obj) => Object.assign({}, obj))
-      .sort((p1, p2) => p1.arrivalTime - p2.arrivalTime);
+      .sort((p1, p2) => p1.arrivalTime - p2.arrivalTime)
 
-    let schedule: number[] = [];
-    let currentProcess: IProcess;
-    let currentMomentOfExecution: number = 0;
+    const schedule: Array<ChartBoxEnum | number> = []
+    let currentProcess: IProcess
+    let currentMomentOfExecution = 0
 
     while (processesQueue.length !== 0) {
-      currentProcess = processesQueue.shift() as IProcess;
+      currentProcess = processesQueue.shift() as IProcess
 
       while (currentProcess.arrivalTime > currentMomentOfExecution) {
-        schedule[currentMomentOfExecution] = ChartBoxEnum.Empty;
-        currentMomentOfExecution++;
+        schedule[currentMomentOfExecution] = ChartBoxEnum.Empty
+        currentMomentOfExecution++
       }
       while (currentProcess.executionTime !== 0) {
-        schedule[currentMomentOfExecution] = currentProcess.id;
-        currentProcess.executionTime -= 1;
-        currentMomentOfExecution++;
+        schedule[currentMomentOfExecution] = currentProcess.id
+        currentProcess.executionTime -= 1
+        currentMomentOfExecution++
       }
     }
 
-    return schedule;
+    return schedule
   }
 }
 
-export default FIFOScheduler;
+export default FIFOScheduler

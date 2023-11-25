@@ -1,97 +1,57 @@
-import { IProcess } from "../interfaces/Process";
-import Scheduler from "../interfaces/Scheduler";
-import ChartBoxEnum from "../components/ChartSection/ChartBoxEnum";
+import { IProcess } from "../interfaces/Process"
+import Scheduler from "../interfaces/Scheduler"
+import ChartBoxEnum from "../components/ChartSection/ChartBoxEnum"
 
 export default class EDFScheduler implements Scheduler {
-  public schedule(
-    processes: IProcess[],
-    quantum: number = 2,
-    overheadTime: number = 1
-  ): number[] {
-    let _processes: IProcess[] = [...processes].map((process) =>
-      Object.assign({}, process)
-    );
+  public schedule(processes: IProcess[], quantum = 2, overheadTime = 1): number[] {
+    // Clona o array de processos para não modificar o original
+    const _processes: IProcess[] = processes.map((process) => ({ ...process }))
 
-    let schedule: number[] = [];
-    let currentProcess: IProcess;
-    let currentMomentOfExecution: number = 0;
-    let processIterations: number = 0;
+    const schedule: number[] = []
+    let currentMomentOfExecution = 0
 
-    while (_processes.length !== 0) {
-      const arrivedProcesses: number[] = _processes
-        .map((process, index) =>
-          process.arrivalTime <= currentMomentOfExecution ? index : -1
-        )
-        .filter((index) => index !== -1);
+    while (_processes.length > 0) {
+      // Obtém processos que já chegaram até o momento atual
+      const arrivedProcesses = _processes.filter((process) => process.arrivalTime <= currentMomentOfExecution)
 
+      // Se não há processos que chegaram, avança o tempo
       if (arrivedProcesses.length === 0) {
-        schedule[currentMomentOfExecution] = ChartBoxEnum.Empty;
-        currentMomentOfExecution++;
-        continue;
+        schedule.push(ChartBoxEnum.Empty)
+        currentMomentOfExecution++
+        continue
       }
 
-      const earliestDeadlineIndex: number = this.getEarliestDeadlineProcess(
-        _processes,
-        arrivedProcesses
-      );
+      // Seleciona o processo com o deadline mais próximo
+      const currentProcess = this.getEarliestDeadlineProcess(arrivedProcesses)
 
-      currentProcess = _processes[earliestDeadlineIndex];
-
-      processIterations = Math.min(currentProcess.executionTime, quantum);
+      // Processa o quantum ou o tempo de execução restante, o que for menor
+      const processIterations = Math.min(currentProcess.executionTime, quantum)
       for (let i = 0; i < processIterations; i++) {
-        if ((currentProcess.deadline as number) >= currentMomentOfExecution) {
-          schedule[currentMomentOfExecution] = currentProcess.id;
-        } else {
-          schedule[currentMomentOfExecution] = currentProcess.id + 0.1;
-        }
-        currentProcess.executionTime -= 1;
-        currentMomentOfExecution++;
+        schedule.push(currentProcess.id)
+        currentMomentOfExecution++
+        currentProcess.executionTime--
       }
 
-      //overhead
-      if (currentProcess.executionTime !== 0) {
+      // Se ainda resta tempo de execução, adiciona overhead
+      if (currentProcess.executionTime > 0) {
         for (let i = 0; i < overheadTime; i++) {
-          schedule[currentMomentOfExecution] = -1;
-          currentMomentOfExecution++;
+          schedule.push(ChartBoxEnum.OverHead)
+          currentMomentOfExecution++
         }
       } else {
-        _processes.splice(earliestDeadlineIndex, 1);
+        // Remove o processo da lista se ele terminou
+        const index = _processes.indexOf(currentProcess)
+        _processes.splice(index, 1)
       }
     }
 
-    return schedule;
+    return schedule
   }
 
-  // Algoritmo que é basicamente um Math.min para lista de processos+deadline
-  private getEarliestDeadlineProcess(
-    processes: IProcess[],
-    arrivedProcesses: number[]
-  ): number {
-    // Errado
-    // let earliestDeadline: number = arrivedProcesses.reduce(
-    //   (minIndex, index) => {
-    //     return (processes[minIndex].deadline as number) <
-    //       (processes[index].deadline as number)
-    //       ? minIndex
-    //       : index;
-    //   },
-    //   0
-    // );
-    // return earliestDeadline;
-
-    // Correto
-    let earliestDeadline: number = Infinity;
-    let earliestDeadlineIndex: number = -1;
-
-    for (let i = 0; i < arrivedProcesses.length; i++) {
-      let process: IProcess = processes[arrivedProcesses[i]];
-      let deadline: number = (process.deadline as number) + process.arrivalTime;
-      if (deadline < earliestDeadline) {
-        earliestDeadline = deadline;
-        earliestDeadlineIndex = arrivedProcesses[i];
-      }
-    }
-
-    return earliestDeadlineIndex;
+  private getEarliestDeadlineProcess(processes: IProcess[]): IProcess {
+    // Supõe que os processos já são aqueles que chegaram
+    return processes.reduce((earliest, process) =>
+      process.deadline < (earliest.deadline ?? Infinity) ? process : earliest
+    )
   }
 }

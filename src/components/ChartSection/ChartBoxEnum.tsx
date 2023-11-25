@@ -6,4 +6,4 @@ const enum ChartBoxEnum {
   Processing = -5,
 }
 
-export default ChartBoxEnum;
+export default ChartBoxEnum
