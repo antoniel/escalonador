@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 // import { generateId } from "../../helper/generateId";
-import { IProcess } from "../../interfaces/Process"
+import { IProcess } from "@/interfaces/types"
 import { Card, CardContent } from "../ui/card"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"

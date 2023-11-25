@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
 import "./FrontGanttChart.css"
-import { IProcess } from "../../interfaces/Process"
+import { IProcess } from "@/interfaces/types"
 import ChartBox from "./ChartBox"
-import { IConditions } from "../../interfaces/Conditions"
+import { IConditions } from "@/interfaces/types"
 import ChartBoxEnum from "./ChartBoxEnum"
 
 interface FrontGanttChartProps {

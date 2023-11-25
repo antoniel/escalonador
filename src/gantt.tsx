@@ -1,4 +1,4 @@
-import { IProcess } from "./interfaces/Process"
+import { IProcess } from "./interfaces/types"
 import ChartBoxEnum from "./components/ChartSection/ChartBoxEnum"
 import React, { useState } from "react"
 import { useAtom } from "jotai"
@@ -33,25 +33,19 @@ export const GanttChart = ({ intervalo, processList, play }: GanttP) => {
     if (time > currentTime) {
       return "bg-white" // Empty
     }
-
-    const isProcessing = schedule[time] === processId
-    const isSwitching =
-      (schedule[time] === ChartBoxEnum.OverHead || schedule[time] === ChartBoxEnum.Switch) && processId === lastProcess
-    const isWaiting = time < process.arrivalTime || time > lastIndexOfProcess
-
-    if (isProcessing) {
+    if (schedule[time] === processId) {
       return "bg-green-500" // Processing
     }
-
-    if (isSwitching) {
+    if (
+      (schedule[time] === ChartBoxEnum.OverHead || schedule[time] === ChartBoxEnum.Switch) &&
+      processId === lastProcess
+    ) {
       return "bg-blue-500" // Switching
     }
-
-    if (isWaiting) {
-      return "bg-yellow-200" // Waiting
+    if (time < process.arrivalTime || time > lastIndexOfProcess) {
+      return "bg-white" // Empty
     }
-
-    return "bg-white" // Empty
+    return "bg-yellow-200" // Waiting
   }
 
   return (

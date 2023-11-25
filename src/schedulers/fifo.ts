@@ -1,6 +1,5 @@
 import ChartBoxEnum from "@/components/ChartSection/ChartBoxEnum"
-import { IProcess } from "../interfaces/Process"
-import Scheduler from "../interfaces/Scheduler"
+import { IProcess, Scheduler } from "@/interfaces/types"
 
 class FIFOScheduler implements Scheduler {
   public schedule(processes: IProcess[]) {

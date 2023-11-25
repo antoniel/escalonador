@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { IProcess } from "../interfaces/Process"
-import Scheduler from "../interfaces/Scheduler"
+import { IProcess } from "@/interfaces/types"
+import Scheduler from "@/interfaces/types"
 import { SchedulerMethods, SchedulerFactory } from "../schedulers"
 
 interface GanttChartInput {

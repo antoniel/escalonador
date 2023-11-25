@@ -1,5 +1,4 @@
-import { IProcess } from "../interfaces/Process"
-import Scheduler from "../interfaces/Scheduler"
+import { IProcess, Scheduler } from "@/interfaces/types"
 import ChartBoxEnum from "../components/ChartSection/ChartBoxEnum"
 
 export default class EDFScheduler implements Scheduler {

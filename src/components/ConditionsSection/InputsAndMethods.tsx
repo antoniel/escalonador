@@ -1,5 +1,5 @@
 import React from "react"
-import { IConditions } from "../../interfaces/Conditions"
+import { IConditions } from "@/interfaces/types"
 import "./InputsAndMethods.css"
 import clsx from "clsx"
 
