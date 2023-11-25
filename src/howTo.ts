@@ -26,9 +26,9 @@ let schedule = scheduler.schedule(processes)
 console.log("escolonamento fifo:")
 console.log(schedule)
 
-let ramSize: number = 20
-let pageSize: number = 4
-let diskSize: number = 80
+let ramSize = 20
+let pageSize = 4
+let diskSize = 80
 const lruPaging: PagingAlgorithm = new LRUPageReplacement(processes, ramSize, pageSize, diskSize)
 
 console.log("paginacao LRU resultante:")

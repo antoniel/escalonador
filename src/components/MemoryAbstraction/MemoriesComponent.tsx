@@ -8,23 +8,24 @@ import PagingAlgorithm from "../../interfaces/PagingAlgorithm"
 import PaginationData from "../../interfaces/PaginationData"
 import FIFOPageReplacement from "../../paging/fifo"
 import LRUPageReplacement from "../../paging/lru"
-import { SchedulerType } from "@/interfaces/Scheduler"
+import { scheduleAtom } from "@/App"
+import { useAtom } from "jotai"
 
 interface MemoriesComponentProps {
   processList: IProcess[]
   conditions: IConditions
-  schedule: SchedulerType
   play: boolean
   reset: boolean
 }
 
-const MemoriesComponent: React.FC<MemoriesComponentProps> = ({ conditions, processList, schedule, play, reset }) => {
+const ramSize = 200
+const pageSize = 4
+const diskSize = 400
+const MemoriesComponent: React.FC<MemoriesComponentProps> = ({ conditions, processList, play, reset }) => {
+  const [schedule] = useAtom(scheduleAtom)
   const [pagingData, setPagingData] = useState<PaginationData[]>([])
 
-  const ramSize = 200
-  const pageSize = 4
-  const diskSize = 480
-
+  console.log(pagingData)
   useEffect(() => {
     if (conditions.pagination == "fifo") {
       const fifoPaging: PagingAlgorithm = new FIFOPageReplacement(processList, ramSize, pageSize, diskSize)

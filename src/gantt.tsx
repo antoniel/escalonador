@@ -1,18 +1,17 @@
 import { IProcess } from "./interfaces/Process"
-import "./gantt.css"
-import { SchedulerType } from "./interfaces/Scheduler"
 import ChartBoxEnum from "./components/ChartSection/ChartBoxEnum"
 import React, { useState } from "react"
+import { useAtom } from "jotai"
+import { scheduleAtom } from "./App"
 
 interface GanttP {
   processList: IProcess[]
   intervalo: number
-  schedule: SchedulerType
   play: boolean
-  reset: boolean
 }
 
-export const GanttChart = ({ intervalo, processList, schedule, play, reset }: GanttP) => {
+export const GanttChart = ({ intervalo, processList, play }: GanttP) => {
+  const [schedule] = useAtom(scheduleAtom)
   const [currentTime, setCurrentTime] = useState(0)
 
   React.useEffect(() => {
@@ -34,19 +33,25 @@ export const GanttChart = ({ intervalo, processList, schedule, play, reset }: Ga
     if (time > currentTime) {
       return "bg-white" // Empty
     }
-    if (schedule[time] === processId) {
+
+    const isProcessing = schedule[time] === processId
+    const isSwitching =
+      (schedule[time] === ChartBoxEnum.OverHead || schedule[time] === ChartBoxEnum.Switch) && processId === lastProcess
+    const isWaiting = time < process.arrivalTime || time > lastIndexOfProcess
+
+    if (isProcessing) {
       return "bg-green-500" // Processing
     }
-    if (
-      (schedule[time] === ChartBoxEnum.OverHead || schedule[time] === ChartBoxEnum.Switch) &&
-      processId === lastProcess
-    ) {
+
+    if (isSwitching) {
       return "bg-blue-500" // Switching
     }
-    if (time < process.arrivalTime || time > lastIndexOfProcess) {
-      return "bg-white" // Empty
+
+    if (isWaiting) {
+      return "bg-yellow-200" // Waiting
     }
-    return "bg-yellow-200" // Waiting
+
+    return "bg-white" // Empty
   }
 
   return (

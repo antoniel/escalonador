@@ -1,71 +1,66 @@
-import { useState, useEffect } from "react";
-import "./MainMemory.css";
-import PaginationData from "../../../interfaces/PaginationData";
+import { useEffect } from "react"
+import "./MainMemory.css"
+import PaginationData from "../../../interfaces/PaginationData"
+import { atom, useAtom } from "jotai"
 
 interface MainMemoryProps {
-  pagingData: PaginationData[];
-  intervalo: number;
-  play: boolean;
-  reset: boolean;
+  pagingData: PaginationData[]
+  intervalo: number
+  play: boolean
+  reset: boolean
 }
 
-const MainMemory: React.FC<MainMemoryProps> = ({
-  pagingData,
-  intervalo,
-  play,
-  reset,
-}) => {
-  const [matrix, setMatrix] = useState<
-    ({ value: number | string; address: number } | string | number)[][]
-  >(Array.from({ length: 5 }, () => Array(10).fill("-")));
-  const [currentStep, setCurrentStep] = useState(1);
-
-  useEffect(() => {
-    if (reset) {
-      const newMatrix = Array.from({ length: 5 }, () => Array(10).fill("-"));
-      setMatrix(newMatrix);
-      setCurrentStep(1);
-    }
-  }, [reset]);
+const DEFAULT_MATRIX = Array.from({ length: 10 }, () => Array(12).fill("⚪️"))
+const DiskAtom = atom({
+  matrix: DEFAULT_MATRIX,
+  currentStep: 1,
+})
+export const resetMainMemoryAtom = atom(null, (_get, set) => {
+  set(DiskAtom, {
+    matrix: Array.from({ length: 5 }, () => Array(10).fill("⚪️")),
+    currentStep: 1,
+  })
+})
+const MainMemory: React.FC<MainMemoryProps> = ({ pagingData, intervalo, play, reset }) => {
+  const [disk, setDisk] = useAtom(DiskAtom)
+  const matrix = disk.matrix
+  const currentStep = disk.currentStep
 
   useEffect(() => {
     if (!reset) {
       const interval = setInterval(() => {
         if (currentStep < pagingData.length) {
-          const currentRam = pagingData[currentStep].ram;
-          const newMatrix = matrix.map((row) => [...row]);
+          const currentRam = pagingData[currentStep].ram
+          const newMatrix = matrix.map((row) => [...row])
 
           for (let i = 0; i < currentRam.length; i++) {
-            const value = currentRam[i];
-            const rowIndex = Math.floor(i / 10);
-            const colIndex = i % 10;
-            const address = rowIndex * 10 + colIndex;
-            newMatrix[rowIndex][colIndex] = { value, address };
-            if(!isNaN(value)){
-              
-            }else{
-              newMatrix[rowIndex][colIndex] = "-";
+            const value = currentRam[i]
+            const rowIndex = Math.floor(i / 10)
+            const colIndex = i % 10
+            const address = rowIndex * 10 + colIndex
+            newMatrix[rowIndex][colIndex] = { value, address }
+            if (isNaN(value)) {
+              newMatrix[rowIndex][colIndex] = "⚪️"
             }
           }
 
           for (let i = currentRam.length; i < 50; i++) {
-            const rowIndex = Math.floor(i / 10);
-            const colIndex = i % 10;
-            newMatrix[rowIndex][colIndex] = "-";
+            const rowIndex = Math.floor(i / 10)
+            const colIndex = i % 10
+            newMatrix[rowIndex][colIndex] = "⚪️"
           }
 
-          setMatrix(newMatrix);
-          setCurrentStep((prevStep) => prevStep + 1);
+          setDisk((prevDisk) => ({ ...prevDisk, matrix: newMatrix, currentStep: prevDisk.currentStep + 1 }))
         } else {
-          clearInterval(interval);
+          clearInterval(interval)
         }
-      }, intervalo);
+      }, intervalo)
 
       return () => {
-        clearInterval(interval);
-      };
+        clearInterval(interval)
+      }
     }
-  }, [currentStep, matrix, play]);
+  }, [currentStep, matrix, play])
 
   return (
     <div className="matrix-container">
@@ -87,7 +82,7 @@ const MainMemory: React.FC<MainMemoryProps> = ({
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default MainMemory;
+export default MainMemory

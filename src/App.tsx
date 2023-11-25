@@ -12,6 +12,8 @@ import { Card, CardContent, CardHeader } from "./components/ui/card"
 import { Input } from "./components/ui/input"
 import { GanttChart } from "./gantt"
 import { Button } from "./components/ui/button"
+import { resetDiskMemoryAtom } from "./components/MemoryAbstraction/Disk/Disk"
+import { resetMainMemoryAtom } from "./components/MemoryAbstraction/RAM/MainMemory"
 
 const INITIAL_CONDITIONS: IConditions = {
   method: "FIFO",
@@ -22,15 +24,19 @@ const INITIAL_CONDITIONS: IConditions = {
 }
 const coditionsAtom = atom<IConditions>(INITIAL_CONDITIONS)
 export const processesAtom = atom<{ [key: string]: IProcess }>({})
+export const scheduleAtom = atom<SchedulerType>([])
 
 export default function App() {
   const [processes, setProcesses] = useAtom(processesAtom)
   const [conditions] = useAtom(coditionsAtom)
-  const [schedule, setSchedule] = useState<SchedulerType>([])
+  const setSchedule = useAtom(scheduleAtom)[1]
+
   const [save, setSave] = useState<boolean>(false)
   const [reset, setReset] = useState<boolean>(true)
   const [play, setPlay] = useState<boolean>(false)
 
+  const setResetDiskMemory = useAtom(resetDiskMemoryAtom)[1]
+  const setResetMainMemory = useAtom(resetMainMemoryAtom)[1]
   const processList = Object.values(processes)
 
   useEffect(() => {
@@ -39,14 +45,19 @@ export default function App() {
       const schedule = getScheduler(schedulerType).schedule(processList, conditions.quantum, conditions.sobrecarga)
 
       setSchedule(schedule)
-      console.log("CreatedSchedule", schedule)
       setTimeout(() => {
         setPlay(!play)
       }, 500)
     }
   }, [save])
 
+  const handleReset = () => {
+    setResetDiskMemory()
+    setResetMainMemory()
+  }
+
   function handleRun() {
+    handleReset()
     setReset(!reset)
     setSave(!save)
   }
@@ -73,23 +84,11 @@ export default function App() {
             <Process key={process.id} process={process} />
           ))}
         </CreateProcesses>
-        <GanttChart
-          processList={processList}
-          intervalo={conditions.intervalo}
-          schedule={schedule}
-          play={play}
-          reset={reset}
-        />
+        <GanttChart processList={processList} intervalo={conditions.intervalo} play={play} />
       </section>
       <section>
         <h1>Visualização de Memória e Disco</h1>
-        <MemoriesComponent
-          processList={processList}
-          conditions={conditions}
-          schedule={schedule}
-          play={play}
-          reset={reset}
-        />
+        <MemoriesComponent processList={processList} conditions={conditions} play={play} reset={reset} />
       </section>
     </div>
   )
