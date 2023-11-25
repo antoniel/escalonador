@@ -1,5 +1,5 @@
-import { IProcess } from "./interfaces/types"
-import ChartBoxEnum from "./interfaces/ChartBoxEnum"
+import { IProcess } from "./types/types"
+import ChartBoxEnum from "./types/ChartBoxEnum"
 import React, { useState } from "react"
 import { useAtom } from "jotai"
 import { scheduleAtom } from "./App"

@@ -1,4 +1,4 @@
-import { IProcess } from "@/interfaces/types"
+import { IProcess } from "@/types/types"
 import LRUQueue from "../data/LRUQueue"
 import AbsPaging from "./AbsPaging"
 

@@ -1,8 +1,8 @@
-import { IProcess, SchedulerType } from "@/interfaces/types"
+import { IProcess, SchedulerType } from "@/types/types"
 import Memory from "../data/Memory"
-import MemoryInterface from "@/interfaces/types"
-import PaginationData from "@/interfaces/types"
-import PagingAlgorithm from "@/interfaces/types"
+import MemoryInterface from "@/types/types"
+import PaginationData from "@/types/types"
+import PagingAlgorithm from "@/types/types"
 
 export default abstract class AbsPaging implements PagingAlgorithm {
   protected ram: MemoryInterface

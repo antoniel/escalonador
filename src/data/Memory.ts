@@ -1,4 +1,4 @@
-import MemoryInteface from "@/interfaces/types"
+import MemoryInteface from "@/types/types"
 
 export default class Memory implements MemoryInteface {
   private _storage: number[]

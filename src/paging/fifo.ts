@@ -1,5 +1,5 @@
 import AbsPaging from "./AbsPaging"
-import { IProcess } from "@/interfaces/types"
+import { IProcess } from "@/types/types"
 
 export default class FIFOPageReplacement extends AbsPaging {
   private firstInQueue: number[] = []
