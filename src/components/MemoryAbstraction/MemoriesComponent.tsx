@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
-import MainMemory from "./RAM/MainMemory"
-import DiskMemory from "./Disk/Disk"
-import "./MemoriesStyle.css"
+import MainMemory from "./Ram"
+import DiskMemory from "./Disk"
 import { IProcess } from "../../interfaces/Process"
 import { IConditions } from "../../interfaces/Conditions"
 import PagingAlgorithm from "../../interfaces/PagingAlgorithm"
@@ -25,7 +24,6 @@ const MemoriesComponent: React.FC<MemoriesComponentProps> = ({ conditions, proce
   const [schedule] = useAtom(scheduleAtom)
   const [pagingData, setPagingData] = useState<PaginationData[]>([])
 
-  console.log(pagingData)
   useEffect(() => {
     if (conditions.pagination == "fifo") {
       const fifoPaging: PagingAlgorithm = new FIFOPageReplacement(processList, ramSize, pageSize, diskSize)
@@ -38,11 +36,11 @@ const MemoriesComponent: React.FC<MemoriesComponentProps> = ({ conditions, proce
 
   return (
     <div className="">
-      <div className="memory-container">
-        <div className="disk-container">
+      <div className="flex flex-row flex-wrap justify-between items-start pb-14">
+        <div className="flex-1 ">
           <DiskMemory pagingData={pagingData} intervalo={conditions.intervalo} play={play} reset={reset} />
         </div>
-        <div className="ram-container">
+        <div className="flex-1">
           <MainMemory pagingData={pagingData} intervalo={conditions.intervalo} play={play} reset={reset} />
         </div>
       </div>

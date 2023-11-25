@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import MemoriesComponent from "./components/MemoryAbstraction/MemoriesComponent"
-import "./components/App.css"
 import { IProcess } from "./interfaces/Process"
 import { IConditions } from "./interfaces/Conditions"
 import { SchedulerMethods, getScheduler } from "./schedulers"
-import Scheduler, { SchedulerType } from "./interfaces/Scheduler"
+import { SchedulerType } from "./interfaces/Scheduler"
 import CreateProcesses, { Process } from "./components/ProcessCreationSection/CreateProcesses"
 import { atom, useAtom } from "jotai"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select"
@@ -12,8 +11,8 @@ import { Card, CardContent, CardHeader } from "./components/ui/card"
 import { Input } from "./components/ui/input"
 import { GanttChart } from "./gantt"
 import { Button } from "./components/ui/button"
-import { resetDiskMemoryAtom } from "./components/MemoryAbstraction/Disk/Disk"
-import { resetMainMemoryAtom } from "./components/MemoryAbstraction/RAM/MainMemory"
+import { resetDiskMemoryAtom } from "./components/MemoryAbstraction/Disk"
+import { resetMainMemoryAtom } from "./components/MemoryAbstraction/Ram"
 
 const INITIAL_CONDITIONS: IConditions = {
   method: "FIFO",
@@ -31,26 +30,20 @@ export default function App() {
   const [conditions] = useAtom(coditionsAtom)
   const setSchedule = useAtom(scheduleAtom)[1]
 
-  const [save, setSave] = useState<boolean>(false)
   const [reset, setReset] = useState<boolean>(true)
-  const [play, setPlay] = useState<boolean>(false)
+  const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
   const setResetDiskMemory = useAtom(resetDiskMemoryAtom)[1]
   const setResetMainMemory = useAtom(resetMainMemoryAtom)[1]
   const processList = Object.values(processes)
 
-  useEffect(() => {
-    if (processList.length > 0) {
-      const schedulerType = conditions.method as SchedulerMethods
-      const schedule = getScheduler(schedulerType).schedule(processList, conditions.quantum, conditions.sobrecarga)
+  const handlePlay = () => {
+    const schedulerType = conditions.method as SchedulerMethods
+    const schedule = getScheduler(schedulerType).schedule(processList, conditions.quantum, conditions.sobrecarga)
 
-      setSchedule(schedule)
-      setTimeout(() => {
-        setPlay(!play)
-      }, 500)
-    }
-  }, [save])
-
+    setSchedule(schedule)
+    setIsPlaying(!isPlaying)
+  }
   const handleReset = () => {
     setResetDiskMemory()
     setResetMainMemory()
@@ -59,7 +52,7 @@ export default function App() {
   function handleRun() {
     handleReset()
     setReset(!reset)
-    setSave(!save)
+    handlePlay()
   }
 
   return (
@@ -79,16 +72,16 @@ export default function App() {
           <h1>Gerenciamento de Processos</h1>
         </div>
         <CreateProcesses processes={processes} setProcesses={setProcesses}>
-          <Button onClick={handleRun}>{play ? "Reiniciar" : "Começar"}</Button>
+          <Button onClick={handleRun}>{isPlaying ? "Reiniciar" : "Começar"}</Button>
           {Object.values(processes).map((process) => (
             <Process key={process.id} process={process} />
           ))}
         </CreateProcesses>
-        <GanttChart processList={processList} intervalo={conditions.intervalo} play={play} />
+        {isPlaying && <GanttChart processList={processList} intervalo={conditions.intervalo} play={isPlaying} />}
       </section>
       <section>
         <h1>Visualização de Memória e Disco</h1>
-        <MemoriesComponent processList={processList} conditions={conditions} play={play} reset={reset} />
+        <MemoriesComponent processList={processList} conditions={conditions} play={isPlaying} reset={reset} />
       </section>
     </div>
   )
