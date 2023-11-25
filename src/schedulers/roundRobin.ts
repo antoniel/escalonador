@@ -1,6 +1,6 @@
 import { IProcess, Scheduler } from "@/interfaces/types"
 import RotatingQueue from "../data/RotatingQueue"
-import ChartBoxEnum from "../components/ChartSection/ChartBoxEnum"
+import ChartBoxEnum from "../interfaces/ChartBoxEnum"
 
 export default class RoundRobinScheduler implements Scheduler {
   public schedule(processes: IProcess[], quantum = 2, overheadTime = 1): number[] {

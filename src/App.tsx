@@ -1,18 +1,18 @@
 import React, { useState } from "react"
-import MemoriesComponent from "./components/MemoryAbstraction/MemoriesComponent"
+import MemoriesComponent from "./components/DiscoAndRamComponents"
 import { IProcess } from "./interfaces/types"
 import { IConditions } from "./interfaces/types"
 import { SchedulerMethods, getScheduler } from "./schedulers"
 import { SchedulerType } from "./interfaces/types"
-import CreateProcesses, { Process } from "./components/ProcessCreationSection/CreateProcesses"
+import CreateProcesses, { Process } from "./components/AddProcess"
 import { atom, useAtom } from "jotai"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select"
 import { Card, CardContent, CardHeader } from "./components/ui/card"
 import { Input } from "./components/ui/input"
 import { GanttChart } from "./gantt"
 import { Button } from "./components/ui/button"
-import { resetDiskMemoryAtom } from "./components/MemoryAbstraction/Disk"
-import { resetMainMemoryAtom } from "./components/MemoryAbstraction/Ram"
+import { resetDiskMemoryAtom } from "./components/Disk"
+import { resetMainMemoryAtom } from "./components/Ram"
 
 const INITIAL_CONDITIONS: IConditions = {
   method: "FIFO",
@@ -80,7 +80,7 @@ export default function App() {
         {isPlaying && <GanttChart processList={processList} intervalo={conditions.intervalo} play={isPlaying} />}
       </section>
       <section>
-        <h1>Visualização de Memória e Disco</h1>
+        <h1 className="pt-4">Visualização de Memória e Disco</h1>
         <MemoriesComponent processList={processList} conditions={conditions} play={isPlaying} reset={reset} />
       </section>
     </div>

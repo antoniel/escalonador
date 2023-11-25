@@ -1,5 +1,5 @@
 import { IProcess, Scheduler } from "@/interfaces/types"
-import ChartBoxEnum from "../components/ChartSection/ChartBoxEnum"
+import ChartBoxEnum from "../interfaces/ChartBoxEnum"
 
 export default class SJFScheduler implements Scheduler {
   public schedule(processes: IProcess[]): number[] {

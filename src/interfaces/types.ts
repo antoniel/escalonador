@@ -1,4 +1,4 @@
-import ChartBoxEnum from "@/components/ChartSection/ChartBoxEnum"
+import ChartBoxEnum from "@/interfaces/ChartBoxEnum"
 
 export interface PaginationData {
   step: number
