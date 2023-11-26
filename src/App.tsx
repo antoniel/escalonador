@@ -49,6 +49,11 @@ export default function App() {
     setResetMainMemory()
   }
 
+  React.useEffect(() => {
+    setResetDiskMemory()
+    setResetMainMemory()
+  }, [reset])
+
   function handleRun() {
     handleReset()
     setReset(!reset)
@@ -77,12 +82,19 @@ export default function App() {
             <Process key={process.id} process={process} />
           ))}
         </CreateProcesses>
-        {isPlaying && <GanttChart processList={processList} intervalo={conditions.intervalo} play={isPlaying} />}
+        {isPlaying && (
+          <>
+            <h1 className="pt-4">Visualização de Memória e Disco</h1>
+            <GanttChart processList={processList} intervalo={conditions.intervalo} play={isPlaying} />
+          </>
+        )}
       </section>
-      <section>
-        <h1 className="pt-4">Visualização de Memória e Disco</h1>
-        <MemoriesComponent processList={processList} conditions={conditions} play={isPlaying} reset={reset} />
-      </section>
+      {isPlaying && (
+        <section>
+          <h1 className="pt-4">Visualização de Memória e Disco</h1>
+          <MemoriesComponent processList={processList} conditions={conditions} play={isPlaying} reset={reset} />
+        </section>
+      )}
     </div>
   )
 }

@@ -1,6 +1,6 @@
-import MemoryInteface from "@/types/types"
+import { MemoryInterface } from "@/types/types"
 
-export default class Memory implements MemoryInteface {
+export default class Memory implements MemoryInterface {
   private _storage: number[]
   private storageSize: number
 
@@ -35,7 +35,7 @@ export default class Memory implements MemoryInteface {
   }
 
   public release(processId: number, numPages: number): void {
-    let removedCount: number = 0
+    let removedCount = 0
     for (let i = 0; i < this.storageSize; i++) {
       if (this._storage[i] === processId) {
         this._storage[i] = NaN

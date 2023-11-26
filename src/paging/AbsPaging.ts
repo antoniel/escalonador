@@ -1,9 +1,6 @@
-import { IProcess, SchedulerType } from "@/types/types"
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { IProcess, MemoryInterface, PaginationData, PagingAlgorithm, SchedulerType } from "@/types/types"
 import Memory from "../data/Memory"
-import MemoryInterface from "@/types/types"
-import PaginationData from "@/types/types"
-import PagingAlgorithm from "@/types/types"
-
 export default abstract class AbsPaging implements PagingAlgorithm {
   protected ram: MemoryInterface
   protected disk: MemoryInterface
@@ -28,6 +25,8 @@ export default abstract class AbsPaging implements PagingAlgorithm {
       this.pageTable.set(process.id, 0)
     }
   }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   schedule(processes: IProcess[], quantum?: number, overheadTime?: number): SchedulerType {
     throw new Error("Method not implemented.")
   }
