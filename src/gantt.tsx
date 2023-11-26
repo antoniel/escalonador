@@ -3,6 +3,7 @@ import ChartBoxEnum from "./types/ChartBoxEnum"
 import React, { useState } from "react"
 import { useAtom } from "jotai"
 import { scheduleAtom } from "./App"
+import { motion } from "framer-motion"
 
 interface GanttP {
   processList: IProcess[]

@@ -28,7 +28,7 @@ export const scheduleAtom = atom<SchedulerType>([])
 export default function App() {
   const [processes, setProcesses] = useAtom(processesAtom)
   const [conditions] = useAtom(coditionsAtom)
-  const setSchedule = useAtom(scheduleAtom)[1]
+  const [schedule, setSchedule] = useAtom(scheduleAtom)
 
   const [reset, setReset] = useState<boolean>(true)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
@@ -59,6 +59,16 @@ export default function App() {
     setReset(!reset)
     handlePlay()
   }
+  const turnaround =
+    processList.reduce((accumulator: number, process) => {
+      // console.log(
+      //   schedule.lastIndexOf(process.id) + 1,
+      //   "-",
+      //   process.arrivalTime
+      // );
+      return (accumulator +=
+        schedule.map((value) => Math.floor(value)).lastIndexOf(process.id) + 1 - process.arrivalTime)
+    }, 0) / processList.length
 
   return (
     <div className="px-12 py-12 max-w-screen-xl mx-auto ">
@@ -86,6 +96,7 @@ export default function App() {
           <>
             <h1 className="pt-4">Visualização de Memória e Disco</h1>
             <GanttChart processList={processList} intervalo={conditions.intervalo} play={isPlaying} />
+            <h2 className="w-full mx-auto block">Turnaround: {turnaround}</h2>
           </>
         )}
       </section>

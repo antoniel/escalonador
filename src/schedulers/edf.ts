@@ -2,15 +2,17 @@ import { IProcess, Scheduler } from "@/types/types"
 import ChartBoxEnum from "../types/ChartBoxEnum"
 
 export default class EDFScheduler implements Scheduler {
+  // Método para agendar processos usando o algoritmo Earliest Deadline First (EDF)
   public schedule(processes: IProcess[], quantum = 2, overheadTime = 1): number[] {
     // Clona o array de processos para não modificar o original
     const _processes: IProcess[] = processes.map((process) => ({ ...process }))
 
-    const schedule: number[] = []
-    let currentMomentOfExecution = 0
+    const schedule: number[] = [] // Array para armazenar o agendamento
+    let currentMomentOfExecution = 0 // Tempo atual na execução
 
+    // Enquanto houver processos
     while (_processes.length > 0) {
-      // Obtém processos que já chegaram até o momento atual
+      // Filtra os processos que já chegaram até o momento atual
       const arrivedProcesses = _processes.filter((process) => process.arrivalTime <= currentMomentOfExecution)
 
       // Se não há processos que chegaram, avança o tempo
@@ -20,7 +22,7 @@ export default class EDFScheduler implements Scheduler {
         continue
       }
 
-      // Seleciona o processo com o deadline mais próximo
+      // Seleciona o processo com o menor deadline
       const currentProcess = this.getEarliestDeadlineProcess(arrivedProcesses)
 
       // Processa o quantum ou o tempo de execução restante, o que for menor
@@ -47,8 +49,9 @@ export default class EDFScheduler implements Scheduler {
     return schedule
   }
 
+  // Método privado para obter o processo com o deadline mais próximo
   private getEarliestDeadlineProcess(processes: IProcess[]): IProcess {
-    // Supõe que os processos já são aqueles que chegaram
+    // Retorna o processo com o menor deadline
     return processes.reduce((earliest, process) =>
       process.deadline < (earliest.deadline ?? Infinity) ? process : earliest
     )
